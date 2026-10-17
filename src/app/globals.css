@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* ---------- themes (switch with `theme <name>` or the title-bar button) ---------- */
+
+:root,
+[data-theme="green"] {
+  --page: #020604;
+  --term: #06100a;
+  --panel: #0a1810;
+  --fg: #c3f7d2;
+  --muted: #5f8f6f;
+  --accent: #3dff8f;
+  --accent-2: #5fd7ff;
+  --accent-3: #ffd866;
+  --danger: #ff6b6b;
+  --line: #1a3826;
+  --glow: rgb(61 255 143 / 0.35);
+  --scanline: rgb(0 0 0 / 0.22);
+  color-scheme: dark;
+}
+
+[data-theme="amber"] {
+  --page: #0a0602;
+  --term: #120b03;
+  --panel: #1b1206;
+  --fg: #ffd9a0;
+  --muted: #9a7444;
+  --accent: #ffb000;
+  --accent-2: #ffcf6e;
+  --accent-3: #ff8c42;
+  --danger: #ff5f4a;
+  --line: #3a2810;
+  --glow: rgb(255 176 0 / 0.35);
+  --scanline: rgb(0 0 0 / 0.25);
+  color-scheme: dark;
+}
+
+[data-theme="dracula"] {
+  --page: #16171f;
+  --term: #22232e;
+  --panel: #2b2c3a;
+  --fg: #f8f8f2;
+  --muted: #7b84b5;
+  --accent: #50fa7b;
+  --accent-2: #bd93f9;
+  --accent-3: #f1fa8c;
+  --danger: #ff5555;
+  --line: #3b3d52;
+  --glow: rgb(189 147 249 / 0.3);
+  --scanline: rgb(0 0 0 / 0.12);
+  color-scheme: dark;
+}
+
+[data-theme="paper"] {
+  --page: #ebe8e1;
+  --term: #fbfaf6;
+  --panel: #f1eee7;
+  --fg: #1f2328;
+  --muted: #6a6f76;
+  --accent: #0a7d3e;
+  --accent-2: #0550ae;
+  --accent-3: #8a5a00;
+  --danger: #c4231d;
+  --line: #d8d3c8;
+  --glow: transparent;
+  --scanline: transparent;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-term: var(--term);
+  --color-panel: var(--panel);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-danger: var(--danger);
+  --color-line: var(--line);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Code", Menlo, monospace;
+}
+
+html {
+  background: var(--page);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--page);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--term);
+}
+
+/* ---------- terminal ---------- */
+
+.term-bg {
+  background:
+    radial-gradient(ellipse at 50% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
+    linear-gradient(color-mix(in srgb, var(--line) 35%, transparent) 1px, transparent 1px) 0 0 / 100% 32px,
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 35%, transparent) 1px, transparent 1px) 0 0 / 32px 100%,
+    var(--page);
+}
+
+.term-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.glow {
+  text-shadow: 0 0 10px var(--glow);
+}
+
+.glow-box {
+  box-shadow: 0 0 10px var(--glow);
+}
+
+.ascii {
+  font-size: clamp(7px, 2.4vw, 13px);
+  line-height: 1.1;
+  white-space: pre;
+}
+
+.cursor {
+  display: inline-block;
+  min-width: 1ch;
+}
+.cursor-on {
+  background: var(--accent);
+  color: var(--term);
+  box-shadow: 0 0 8px var(--glow);
+  animation: blink 1.1s steps(1) infinite;
+}
+.cursor-off {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+@keyframes blink {
+  50% {
+    background: transparent;
+    color: inherit;
+    box-shadow: none;
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.25s ease-out both;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+
+.pulse-dot {
+  box-shadow: 0 0 0 0 var(--glow);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+/* CRT: scanlines + vignette + a faint phosphor glow on text */
+.crt[data-crt="on"] {
+  text-shadow: 0 0 2px color-mix(in srgb, var(--glow) 60%, transparent);
+}
+.crt[data-crt="on"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 2px, var(--scanline) 2px 3px),
+    radial-gradient(ellipse at center, transparent 60%, rgb(0 0 0 / 0.25));
+}
+[data-theme="paper"] .crt[data-crt="on"]::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .cursor-on,
+  .pulse-dot,
+  .fade-in {
+    animation: none;
+  }
+}
